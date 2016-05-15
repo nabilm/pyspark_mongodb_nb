@@ -1,13 +1,9 @@
-# yaoota_analytics_tools
-Yaoota analytics tools ( Several tools using pandas , spark and mongodb)
-
-
 Docker machine contents:
 
- - pyspark
+ - pyspark 1.6.0
  - Conda
  - jubyter notebook
- - mongodb-hadoop driver
+ - mongodb-hadoop driver 1.5.1
 
 
 How to start the docker machine?
