@@ -1,9 +1,9 @@
 Docker machine contents:
 
- - pyspark 1.6.0
+ - pyspark 1.6.1
  - Conda
  - jubyter notebook
- - mongodb-hadoop driver 1.5.1
+ - mongodb-hadoop driver 1.5.2
 
 
 How to start the docker machine?
