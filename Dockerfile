@@ -17,8 +17,8 @@ RUN apt-get -y update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install mongodb-hadoop dependencies
-ENV MONGO_HADOOP_VERSION 1.5.1
-ENV MONGO_HADOOP_COMMIT r1.5.1
+ENV MONGO_HADOOP_VERSION 1.5.2
+ENV MONGO_HADOOP_COMMIT r1.5.2
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 #ENV SPARK_HOME /usr/local/spark
 ENV MONGO_HADOOP_URL https://github.com/mongodb/mongo-hadoop/archive/${MONGO_HADOOP_COMMIT}.tar.gz
