@@ -42,7 +42,7 @@ RUN bash -c '. activate python2 && conda install pymongo=3.0.3'
 
 # Set spark config file
 RUN echo "spark.driver.extraClassPath   ${CLASSPATH}" > $SPARK_HOME/conf/spark-defaults.conf
-RUN echo "export SPARK_DRIVER_MEMORY=\"2g\"" > $SPARK_HOME/conf/spark-env.sh
+RUN echo "export SPARK_DRIVER_MEMORY=\"1g\"" > $SPARK_HOME/conf/spark-env.sh
 
 USER jovyan
 
