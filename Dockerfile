@@ -42,11 +42,12 @@ RUN bash -c '. activate python2 && conda install pymongo=3.0.3'
 
 # Set spark config file
 RUN echo "spark.driver.extraClassPath   ${CLASSPATH}" > $SPARK_HOME/conf/spark-defaults.conf
-RUN echo "export SPARK_DRIVER_MEMORY=\"2g\"" > $SPARK_HOME/conf/spark-env.sh
+RUN echo "export SPARK_DRIVER_MEMORY=\"1g\"" > $SPARK_HOME/conf/spark-env.sh
 
 USER jovyan
 
-RUN jq --arg v "$CONDA_DIR/envs/python2/bin/python" \
-        '.["env"]["PYSPARK_DRIVER_PYTHON"]=$v' \
-        $CONDA_DIR/share/jupyter/kernels/python2/kernel.json > /tmp/kernel.json && \
-        mv /tmp/kernel.json $CONDA_DIR/share/jupyter/kernels/python2/kernel.json
+# TODO: Cleanup
+#RUN jq --arg v "$CONDA_DIR/envs/python2/bin/python" \
+#        '.["env"]["PYSPARK_DRIVER_PYTHON"]=$v' \
+#        $CONDA_DIR/share/jupyter/kernels/python2/kernel.json > /tmp/kernel.json && \
+#        mv /tmp/kernel.json $CONDA_DIR/share/jupyter/kernels/python2/kernel.json

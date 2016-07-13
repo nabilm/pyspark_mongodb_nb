@@ -30,5 +30,9 @@ To access the docker machine using root user you need to execute:
 -----------------------------------------------------------------
     $ sudo docker exec -i -u 0 -t pyspark_mongo_nb /bin/bash
 
+Download using docker hub
+--------------------------
+    $ sudo docker pull nabilm/pyspark_mongo_nb
+
 Note That : The docker machine is based on jupyter pyspark-notebook
     https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook
