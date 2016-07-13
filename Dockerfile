@@ -1,6 +1,9 @@
 # Copyright (c) Mohamed Nabil HAfez.
 # Distributed under the terms of the Modified BSD License.
-FROM jupyter/pyspark-notebook
+
+# Locking the jupyter/pyspark-notebook image version to latest tested release to avoid any unexpected updates, this
+# should be upgraded manually when newer images are released and tested
+FROM jupyter/pyspark-notebook:2485724a08c9
 
 MAINTAINER nabilm <m.nabil.hafez@gmail.com>
 
@@ -31,6 +34,8 @@ ENV CLASSPATH ${SPARK_DRIVER_EXTRA_CLASSPATH}
 ENV JARS ${MONGO_HADOOP_JAR},${MONGO_HADOOP_SPARK_JAR}
 ENV PYSPARK_DRIVER_PYTHON $CONDA_DIR/envs/python2/bin/python
 ENV PYTHONPATH ${MONGO_HADOOP_SPARK_PATH}/src/main/python:$PYTHONPATH
+# Manually setting PYSPARK_PYTHON for workers to use python2 (https://github.com/jupyter/docker-stacks/issues/231)
+ENV PYSPARK_PYTHON $CONDA_DIR/envs/python2/bin/python
 # Install/configure mongodb driver
 RUN wget -qO - ${MONGO_HADOOP_URL} | tar -xz -C /usr/local/ \
     && mv /usr/local/mongo-hadoop-${MONGO_HADOOP_COMMIT} /usr/local/mongo-hadoop \

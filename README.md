@@ -1,8 +1,8 @@
 Docker machine contents:
 
- - pyspark 1.6.1
+ - PySpark 1.6.1
  - Conda
- - jubyter notebook
+ - Jupyter Notebook
  - mongodb-hadoop driver 1.5.2
 
 
@@ -33,6 +33,16 @@ To access the docker machine using root user you need to execute:
 Download using docker hub
 --------------------------
     $ sudo docker pull nabilm/pyspark_mongo_nb
+    
+ 
+Test that things are working
+----------------------------
+To use Spark in a Python 3 notebook, add the following code at the start of the notebook:
+```
+import os
+# make sure pyspark tells workers to use python3
+os.environ['PYSPARK_PYTHON'] = '/opt/conda/bin/python3'
+```
+Run the [Using Spark Local Mode](https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook#using-spark-local-mode) tutorial to test that everything is working
 
-Note That : The docker machine is based on jupyter pyspark-notebook
-    https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook
+**Note That**: The docker machine is based on [jupyter/pyspark-notebook](https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook)
