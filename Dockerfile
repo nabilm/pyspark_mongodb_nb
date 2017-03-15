@@ -3,56 +3,49 @@
 
 # Locking the jupyter/pyspark-notebook image version to latest tested release to avoid any unexpected updates, this
 # should be upgraded manually when newer images are released and tested
-FROM jupyter/pyspark-notebook:2485724a08c9
-
-MAINTAINER nabilm <m.nabil.hafez@gmail.com>
+FROM jupyter/pyspark-notebook:72cca2a7f3ea
 
 USER root
 
 # Util to help with kernel spec later
 RUN apt-get -y update && apt-get -y install jq && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+
 # Spark dependencies
-ENV APACHE_SPARK_VERSION 1.6.1
+ENV APACHE_SPARK_VERSION 2.1.0
 RUN apt-get -y update && \
-    apt-get install -y --no-install-recommends openjdk-7-jre-headless python-setuptools build-essential python-dev python-pip openjdk-7-jdk && \
+    apt-get -y install default-jdk python-setuptools build-essential python-dev python-pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN bash -c '. activate python2 && pip install pymongo==3.4'
+
 # Install mongodb-hadoop dependencies
-ENV MONGO_HADOOP_VERSION 1.5.2
-ENV MONGO_HADOOP_COMMIT r1.5.2
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
-#ENV SPARK_HOME /usr/local/spark
-ENV MONGO_HADOOP_URL https://github.com/mongodb/mongo-hadoop/archive/${MONGO_HADOOP_COMMIT}.tar.gz
-ENV MONGO_HADOOP_LIB_PATH /usr/local/mongo-hadoop/build/libs
-ENV MONGO_HADOOP_JAR  ${MONGO_HADOOP_LIB_PATH}/mongo-hadoop-${MONGO_HADOOP_VERSION}.jar
-ENV MONGO_HADOOP_SPARK_PATH /usr/local/mongo-hadoop/spark
-ENV MONGO_HADOOP_SPARK_JAR ${MONGO_HADOOP_SPARK_PATH}/build/libs/mongo-hadoop-spark-${MONGO_HADOOP_VERSION}.jar
-ENV SPARK_DRIVER_EXTRA_CLASSPATH ${MONGO_HADOOP_JAR}:${MONGO_HADOOP_SPARK_JAR}
-ENV CLASSPATH ${SPARK_DRIVER_EXTRA_CLASSPATH}
-ENV JARS ${MONGO_HADOOP_JAR},${MONGO_HADOOP_SPARK_JAR}
-ENV PYSPARK_DRIVER_PYTHON $CONDA_DIR/envs/python2/bin/python
-ENV PYTHONPATH ${MONGO_HADOOP_SPARK_PATH}/src/main/python:$PYTHONPATH
+ENV SPARK_HOME /usr/local/spark
+ENV MONGO_SPARK_PATH /usr/local/mongo-spark
+ENV JARS org.mongodb.spark:mongo-spark-connector_2.11:2.0.0
+ENV CLASSPATH ${MONGO_SPARK_PATH}/mongo-spark-connector_2.11-2.0.0.jar
 # Manually setting PYSPARK_PYTHON for workers to use python2 (https://github.com/jupyter/docker-stacks/issues/231)
 ENV PYSPARK_PYTHON $CONDA_DIR/envs/python2/bin/python
 # Install/configure mongodb driver
-RUN wget -qO - ${MONGO_HADOOP_URL} | tar -xz -C /usr/local/ \
-    && mv /usr/local/mongo-hadoop-${MONGO_HADOOP_COMMIT} /usr/local/mongo-hadoop \
-    && cd /usr/local/mongo-hadoop \
-    && ./gradlew jar
-
-# install python mongo
-RUN bash -c '. activate python2 && conda install pymongo=3.0.3'
+ENV MONGO_SPARK_URL http://repo1.maven.org/maven2/org/mongodb/spark/mongo-spark-connector_2.11/2.0.0/mongo-spark-connector_2.11-2.0.0.jar
+# Install/configure mongodb driver
+RUN cd /usr/local/  && \
+        mkdir ${MONGO_SPARK_PATH} && \
+        cd ${MONGO_SPARK_PATH} && \
+        wget  ${MONGO_SPARK_URL}
 
 # Set spark config file
-RUN echo "spark.driver.extraClassPath   ${CLASSPATH}" > $SPARK_HOME/conf/spark-defaults.conf
-RUN echo "export SPARK_DRIVER_MEMORY=\"1g\"" > $SPARK_HOME/conf/spark-env.sh
+RUN echo "spark.jars.packages ${JARS}" >> $SPARK_HOME/conf/spark-defaults.conf
+RUN echo "export SPARK_DRIVER_MEMORY=\"1g\"" >> $SPARK_HOME/conf/spark-env.sh
 
-USER jovyan
+ENV PYSPARK_DRIVER_PYTHON /usr/local/bin/jupyter
+ENV PYSPARK_DRIVER_PYTHON_OPTS " --NotebookApp.open_browser=False --NotebookApp.ip='*' --NotebookApp.port=8888 --NotebookApp.password='' --NotebookApp.token=''"
 
-# TODO: Cleanup
-#RUN jq --arg v "$CONDA_DIR/envs/python2/bin/python" \
-#        '.["env"]["PYSPARK_DRIVER_PYTHON"]=$v' \
-#        $CONDA_DIR/share/jupyter/kernels/python2/kernel.json > /tmp/kernel.json && \
-#        mv /tmp/kernel.json $CONDA_DIR/share/jupyter/kernels/python2/kernel.json
+RUN mkdir /pyspark
+RUN chown $NB_USER /pyspark
+USER $NB_USER
+WORKDIR /pyspark
+ENV GRANT_SUDO "True"
+ENTRYPOINT ["tini", "--"]
+CMD ["start-notebook.sh"," --NotebookApp.open_browser=False --NotebookApp.ip='*' --NotebookApp.port=8888 --NotebookApp.password='' --NotebookApp.token=''"]

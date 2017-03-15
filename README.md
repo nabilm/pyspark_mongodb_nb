@@ -1,9 +1,9 @@
 Docker machine contents:
 
- - PySpark 1.6.1
+ - PySpark 2.1
  - Conda
  - Jupyter Notebook
- - mongodb-hadoop driver 1.5.2
+ - mongodb-spark driver 2.11:2.0.0
 
 
 How to start the docker machine?
@@ -24,15 +24,15 @@ How to start the docker machine?
 
 To Access the docker machine using normal user you need to execute:
 -------------------------------------------------------------------
-    $ sudo docker exec -i -t pyspark_mongo_nb /bin/bash
+    $ sudo docker exec -it pyspark_mongo_nb bash
 
 To access the docker machine using root user you need to execute:
 -----------------------------------------------------------------
-    $ sudo docker exec -i -u 0 -t pyspark_mongo_nb /bin/bash
+    $ sudo docker exec -i -u root -t pyspark_mongo_nb bash
 
 Download using docker hub
 --------------------------
-    $ sudo docker pull nabilm/pyspark_mongo_nb
+    $ sudo docker pull phawzy/pyspark_mongo_nb
     
  
 Test that things are working
