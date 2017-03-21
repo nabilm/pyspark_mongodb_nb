@@ -15,8 +15,8 @@ How to start the docker machine?
 
     3- Create shared directory on you host
             $ sudo mkdir /pyspark
-    3- Execute:
-            $ sudo docker run -d -p 8888:8888 -p 4040:4040 -p 4041:4041 -v /pysprak/:/pyspark --name pyspark_mongo_nb pyspark_mongo_nb
+    4- Execute:
+            $ sudo docker run -d -p 8888:8888 -p 4040:4040 -p 4041:4041 -v /pyspark/:/pyspark --name pyspark_mongo_nb pyspark_mongo_nb
 
     note:
         - You can access the jupyter notebook on http://localhost:8888
